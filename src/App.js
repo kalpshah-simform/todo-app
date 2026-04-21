@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { ThemeContext } from './ThemeContext';
 
 let nextId = 1;
@@ -14,6 +14,9 @@ export default function App() {
   ]);
   const [input, setInput] = useState('');
   const [filter, setFilter] = useState('All');
+  const [editingId, setEditingId] = useState(null);
+  const [editText, setEditText] = useState('');
+  const editInputRef = useRef(null);
 
   const addTodo = (e) => {
     e.preventDefault();
@@ -36,6 +39,30 @@ export default function App() {
   const clearCompleted = () => {
     setTodos((prev) => prev.filter((t) => !t.done));
   };
+
+  const startEdit = (todo) => {
+    setEditingId(todo.id);
+    setEditText(todo.text);
+  };
+
+  const saveEdit = (id) => {
+    const trimmed = editText.trim();
+    if (!trimmed) return;
+    setTodos((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, text: trimmed } : t))
+    );
+    setEditingId(null);
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+  };
+
+  useEffect(() => {
+    if (editingId !== null && editInputRef.current) {
+      editInputRef.current.focus();
+    }
+  }, [editingId]);
 
   const filtered = todos.filter((t) => {
     if (filter === 'Active') return !t.done;
@@ -95,7 +122,7 @@ export default function App() {
             </li>
           )}
           {filtered.map((todo) => (
-            <li key={todo.id} className={`todo-item${todo.done ? ' done' : ''}`}>
+            <li key={todo.id} className={`todo-item${todo.done ? ' done' : ''}${editingId === todo.id ? ' editing' : ''}`}>
               <button
                 className="check-btn"
                 onClick={() => toggleTodo(todo.id)}
@@ -103,14 +130,55 @@ export default function App() {
               >
                 <span className="checkmark">{todo.done ? '✓' : ''}</span>
               </button>
-              <span className="todo-text">{todo.text}</span>
-              <button
-                className="delete-btn"
-                onClick={() => deleteTodo(todo.id)}
-                aria-label="Delete todo"
-              >
-                ✕
-              </button>
+              {editingId === todo.id ? (
+                <>
+                  <input
+                    ref={editInputRef}
+                    className="edit-input"
+                    value={editText}
+                    onChange={(e) => setEditText(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') saveEdit(todo.id);
+                      if (e.key === 'Escape') cancelEdit();
+                    }}
+                    aria-label="Edit todo"
+                  />
+                  <div className="edit-actions">
+                    <button
+                      className="save-btn"
+                      onClick={() => saveEdit(todo.id)}
+                      aria-label="Save edit"
+                    >
+                      ✓
+                    </button>
+                    <button
+                      className="cancel-btn"
+                      onClick={cancelEdit}
+                      aria-label="Cancel edit"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <span className="todo-text">{todo.text}</span>
+                  <button
+                    className="edit-btn"
+                    onClick={() => startEdit(todo)}
+                    aria-label="Edit todo"
+                  >
+                    ✎
+                  </button>
+                  <button
+                    className="delete-btn"
+                    onClick={() => deleteTodo(todo.id)}
+                    aria-label="Delete todo"
+                  >
+                    ✕
+                  </button>
+                </>
+              )}
             </li>
           ))}
         </ul>
