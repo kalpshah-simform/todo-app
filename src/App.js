@@ -148,6 +148,7 @@ export default function App() {
                       className="save-btn"
                       onClick={() => saveEdit(todo.id)}
                       aria-label="Save edit"
+                      disabled={!editText.trim()}
                     >
                       ✓
                     </button>
