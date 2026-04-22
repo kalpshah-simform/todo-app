@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "type": "command",
+        "bash": "bash .github/hooks/log-agent-event.sh preToolUse"
+      }
+    ],
+    "sessionStart": [
+      {
+        "type": "command",
+        "bash": "bash .github/hooks/log-agent-event.sh sessionStart"
+      }
+    ]
+  }
+}
