@@ -98,7 +98,7 @@ export default function App() {
             className="add-input"
             aria-label="New todo"
           />
-          <button type="submit" className="add-btn" aria-label="Add todo">
+          <button type="submit" className="add-btn" aria-label="Add todo" disabled={!input.trim()}>
             Add
           </button>
         </form>
