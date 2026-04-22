@@ -174,6 +174,13 @@ body {
   transform: translateY(0);
 }
 
+.add-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
 /* ─── Filters ────────────────────────────────────────────────── */
 .filters {
   display: flex;
@@ -394,6 +401,12 @@ body {
 .save-btn:hover {
   background: var(--accent-light);
   transform: scale(1.1);
+}
+
+.save-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .cancel-btn {
